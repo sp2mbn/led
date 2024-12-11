@@ -38,6 +38,7 @@ ezLED::ezLED(int pin, int mode) {
 	_ledState    = LED_STATE_IDLE;
 	_outputState = LED_OFF; // LED_OFF, LED_ON
 	_brightness  = 0;  // 0 to 255
+	_forceAnalog = false;
 
 	_fadeFrom           = 0;
 	_fadeTo             = 0;
@@ -52,6 +53,10 @@ ezLED::ezLED(int pin, int mode) {
 	_blinkCounter       = 0;
 
 	pinMode(_ledPin, OUTPUT);
+}
+
+void ezLED::useAnalog(bool forceAnalog) {
+	_forceAnalog = forceAnalog;
 }
 
 void ezLED::setBlink(unsigned long onTime, unsigned long offTime, unsigned long delayTime) {
@@ -75,7 +80,12 @@ void ezLED::updateDigital() {
 	else
 		state = (_outputState == LED_OFF) ? HIGH : LOW;
 
-	digitalWrite(_ledPin, state);
+	if (_forceAnalog == true) {
+		_brightness = state == HIGH ? 255 : 0;
+		updateAnalog();
+	} else {
+		digitalWrite(_ledPin, state);
+	}
 }
 
 void ezLED::turnON(unsigned long delayTime) {
@@ -218,6 +228,10 @@ int ezLED::getState(void) {
 		default:
 			return LED_IDLE;
 	}
+}
+
+int ezLED::getPin(void) {
+	return _ledPin;
 }
 
 void ezLED::loop(void) {
