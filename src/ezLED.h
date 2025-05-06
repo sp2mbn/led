@@ -68,6 +68,7 @@ class ezLED
 		unsigned char _ledState;
 		unsigned char _outputState; // LED_OFF, LED_ON
 		int _brightness;  // 0 to 255
+		bool _forceAnalog = false;
 
 		unsigned char _fadeFrom = 0;
 		unsigned char _fadeTo = 0;
@@ -87,6 +88,7 @@ class ezLED
 
 	public:
 		ezLED(int pin, int mode = CTRL_ANODE);
+		void useAnalog(bool forceAnalog);
 		void turnON(unsigned long delayTime = 0);
 		void turnOFF(unsigned long delayTime = 0);
 		void toggle(unsigned long delayTime = 0);
@@ -101,6 +103,7 @@ class ezLED
 
 		int getOnOff(void);
 		int getState(void);
+		int getPin(void);
 		void loop(void);
 };
 
