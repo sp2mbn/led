@@ -84,6 +84,7 @@ class ezLED
 
 		void setBlink(unsigned long onTime, unsigned long offTime, unsigned long delayTime);
 		void updateAnalog();
+		void updateAnalog(int brightness);
 		void updateDigital();
 
 	public:
@@ -98,6 +99,8 @@ class ezLED
 		void blink(unsigned long onTime, unsigned long offTime, unsigned long delayTime = 0);
 		void blinkInPeriod(unsigned long onTime, unsigned long offTime, unsigned long blinkTime, unsigned long delayTime = 0);
 		void blinkNumberOfTimes(unsigned long onTime, unsigned long offTime, unsigned int numberOfTimes, unsigned long delayTime = 0);
+
+		void setBrightness(int brightness);
 
 		void cancel(void);
 

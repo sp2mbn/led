@@ -67,10 +67,14 @@ void ezLED::setBlink(unsigned long onTime, unsigned long offTime, unsigned long 
 }
 
 void ezLED::updateAnalog() {
+	updateAnalog(_brightness);
+}
+
+void ezLED::updateAnalog(int brightness) {
 	if(_ctrlMode == CTRL_ANODE)
-		analogWrite(_ledPin, _brightness);
+		analogWrite(_ledPin, brightness);
 	else
-		analogWrite(_ledPin, 255 - _brightness);
+		analogWrite(_ledPin, 255 - brightness);
 }
 
 void ezLED::updateDigital() {
@@ -81,8 +85,7 @@ void ezLED::updateDigital() {
 		state = (_outputState == LED_OFF) ? HIGH : LOW;
 
 	if (_forceAnalog == true) {
-		_brightness = state == HIGH ? 255 : 0;
-		updateAnalog();
+		updateAnalog(state == HIGH ? _brightness : 0);
 	} else {
 		digitalWrite(_ledPin, state);
 	}
@@ -206,6 +209,10 @@ void ezLED::blinkNumberOfTimes(unsigned long onTime, unsigned long offTime, unsi
 	loop();
 }
 
+void ezLED::setBrightness(int brightness) {
+	_brightness = brightness;
+}
+
 void ezLED::cancel(void) {
 	turnOFF();
 }
@@ -283,12 +290,16 @@ void ezLED::loop(void) {
 			break;
 
 		case LED_STATE_FADE:
-			if((millis() - _lastTime) <= _fadeTime) {
-				unsigned long progress = millis() - _lastTime;
-				_brightness = map(progress, 0, _fadeTime, _fadeFrom, _fadeTo);
-			} else {
-				_ledState = LED_STATE_IDLE;
-				_outputState = LED_OFF;
+			{
+				int brightness = _brightness;
+				if((millis() - _lastTime) <= _fadeTime) {
+					unsigned long progress = millis() - _lastTime;
+					brightness = map(progress, 0, _fadeTime, _fadeFrom, _fadeTo);
+				} else {
+					_ledState = LED_STATE_IDLE;
+					_outputState = LED_OFF;
+				}
+				updateAnalog(brightness);
 			}
 			break;
 
@@ -327,8 +338,6 @@ void ezLED::loop(void) {
 			Serial.println(F("UNKNOW STATE"));
 	}
 
-	if(_ledState == LED_STATE_FADE)
-		updateAnalog();
-	else
+	if(_ledState != LED_STATE_FADE)
 		updateDigital();
 }
