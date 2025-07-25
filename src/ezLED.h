@@ -59,6 +59,9 @@
 #define LED_STATE_FADE   3
 #define LED_STATE_BLINK  4
 
+#define ANALOG_MODE_PWM false
+#define ANALOG_MODE_DAC true
+
 class ezLED
 {
 	private:
@@ -69,6 +72,7 @@ class ezLED
 		unsigned char _outputState; // LED_OFF, LED_ON
 		int _brightness;  // 0 to 255
 		bool _forceAnalog = false;
+		bool _analogMode = ANALOG_MODE_PWM;
 
 		unsigned char _fadeFrom = 0;
 		unsigned char _fadeTo = 0;
@@ -90,6 +94,7 @@ class ezLED
 	public:
 		ezLED(int pin, int mode = CTRL_ANODE);
 		void useAnalog(bool forceAnalog);
+		void setAnalogMode(bool analogMode);
 		void turnON(unsigned long delayTime = 0);
 		void turnOFF(unsigned long delayTime = 0);
 		void toggle(unsigned long delayTime = 0);

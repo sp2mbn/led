@@ -59,6 +59,16 @@ void ezLED::useAnalog(bool forceAnalog) {
 	_forceAnalog = forceAnalog;
 }
 
+void ezLED::setAnalogMode(bool analogMode) {
+	if (analogMode == ANALOG_MODE_DAC) {
+		if (_ledPin < 25 || _ledPin > 26) {
+			log_e("DAC mode is only available on pins 25 and 26. Please use ANALOG_MODE_PWM instead.");
+			return;
+		}
+	}
+	_analogMode = analogMode;
+}
+
 void ezLED::setBlink(unsigned long onTime, unsigned long offTime, unsigned long delayTime) {
 	_blinkOnTime  = onTime;
 	_blinkOffTime = offTime;
@@ -71,10 +81,12 @@ void ezLED::updateAnalog() {
 }
 
 void ezLED::updateAnalog(int brightness) {
-	if(_ctrlMode == CTRL_ANODE)
-		analogWrite(_ledPin, brightness);
-	else
-		analogWrite(_ledPin, 255 - brightness);
+	int stateBrightness = _ctrlMode == CTRL_ANODE ? brightness : 255 - brightness;
+	if (_analogMode == ANALOG_MODE_PWM)
+		analogWrite(_ledPin, stateBrightness);
+	else if (_analogMode == ANALOG_MODE_DAC) {
+		dacWrite(_ledPin, stateBrightness);
+	}
 }
 
 void ezLED::updateDigital() {
