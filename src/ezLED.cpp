@@ -39,6 +39,8 @@ ezLED::ezLED(int pin, int mode) {
 	_outputState = LED_OFF; // LED_OFF, LED_ON
 	_brightness  = 0;  // 0 to 255
 	_forceAnalog = false;
+	_analogMode = ANALOG_MODE_PWM;
+	_afterBlinkCallback = nullptr;
 
 	_fadeFrom           = 0;
 	_fadeTo             = 0;
@@ -181,10 +183,11 @@ void ezLED::blink(unsigned long onTime, unsigned long offTime, unsigned long del
 	loop();
 }
 
-void ezLED::blinkInPeriod(unsigned long onTime, unsigned long offTime, unsigned long blinkTime, unsigned long delayTime) {
+void ezLED::blinkInPeriod(unsigned long onTime, unsigned long offTime, unsigned long blinkTime, unsigned long delayTime, std::function<void()> afterBlinkCallback) {
 	setBlink(onTime, offTime, delayTime);
 	_blinkTimePeriod = blinkTime;
 	_ledMode   = LED_MODE_BLINK_PERIOD;
+	_afterBlinkCallback = afterBlinkCallback;
 
 	if(_ledState == LED_STATE_IDLE) {
 		if(delayTime > 0)
@@ -201,10 +204,11 @@ void ezLED::blinkInPeriod(unsigned long onTime, unsigned long offTime, unsigned 
 	loop();
 }
 
-void ezLED::blinkNumberOfTimes(unsigned long onTime, unsigned long offTime, unsigned int numberOfTimes, unsigned long delayTime) {
+void ezLED::blinkNumberOfTimes(unsigned long onTime, unsigned long offTime, unsigned int numberOfTimes, unsigned long delayTime, std::function<void()> afterBlinkCallback) {
 	setBlink(onTime, offTime, delayTime);
 	_blinkNumberOfTimes = numberOfTimes;
 	_ledMode   = LED_MODE_BLINK_NUM_TIME;
+	_afterBlinkCallback = afterBlinkCallback;
 
 	if(_ledState == LED_STATE_IDLE) {
 		if(delayTime > 0)
@@ -334,13 +338,19 @@ void ezLED::loop(void) {
 					if((unsigned long)(millis() -_blinkTimer) >= _blinkTimePeriod) {
 						_outputState = LED_OFF;
 						_ledState = LED_STATE_IDLE;
-					}
+						if (_afterBlinkCallback) {
+							_afterBlinkCallback();
+						}
+					}					
 					break;
 
 				case LED_MODE_BLINK_NUM_TIME:
 					if(_blinkCounter >= (2 * _blinkNumberOfTimes)) {
 						_outputState = LED_OFF;
 						_ledState = LED_STATE_IDLE;
+						if (_afterBlinkCallback) {
+							_afterBlinkCallback();
+						}
 					}
 					break;
 			}

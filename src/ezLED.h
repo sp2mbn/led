@@ -71,8 +71,9 @@ class ezLED
 		unsigned char _ledState;
 		unsigned char _outputState; // LED_OFF, LED_ON
 		int _brightness;  // 0 to 255
-		bool _forceAnalog = false;
-		bool _analogMode = ANALOG_MODE_PWM;
+		bool _forceAnalog;
+		bool _analogMode;
+		std::function<void()> _afterBlinkCallback;
 
 		unsigned char _fadeFrom = 0;
 		unsigned char _fadeTo = 0;
@@ -102,8 +103,8 @@ class ezLED
 		void fade(int fadeFrom, int fadeTo, unsigned long fadeTime, unsigned long delayTime = 0);
 
 		void blink(unsigned long onTime, unsigned long offTime, unsigned long delayTime = 0);
-		void blinkInPeriod(unsigned long onTime, unsigned long offTime, unsigned long blinkTime, unsigned long delayTime = 0);
-		void blinkNumberOfTimes(unsigned long onTime, unsigned long offTime, unsigned int numberOfTimes, unsigned long delayTime = 0);
+		void blinkInPeriod(unsigned long onTime, unsigned long offTime, unsigned long blinkTime, unsigned long delayTime = 0, std::function<void()> afterBlinkCallback = nullptr);
+		void blinkNumberOfTimes(unsigned long onTime, unsigned long offTime, unsigned int numberOfTimes, unsigned long delayTime = 0, std::function<void()> afterBlinkCallback = nullptr);
 
 		void setBrightness(int brightness);
 
