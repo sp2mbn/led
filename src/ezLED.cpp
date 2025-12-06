@@ -84,11 +84,11 @@ void ezLED::updateAnalog() {
 
 void ezLED::updateAnalog(int brightness) {
 	int stateBrightness = _ctrlMode == CTRL_ANODE ? brightness : 255 - brightness;
-	if (_analogMode == ANALOG_MODE_PWM)
+	#ifdef ANALOG_MODE_PWM
 		analogWrite(_ledPin, stateBrightness);
-	else if (_analogMode == ANALOG_MODE_DAC) {
+	#else
 		dacWrite(_ledPin, stateBrightness);
-	}
+	#endif
 }
 
 void ezLED::updateDigital() {
