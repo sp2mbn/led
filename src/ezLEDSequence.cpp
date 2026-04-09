@@ -192,7 +192,7 @@ void ezLEDSequence::nextStep() {
     
     _currentStepRepetition++;
     
-    if (_currentStepRepetition > (int)_steps[_currentStepIndex].repetitions) {
+    if (_currentStepRepetition >= (int)_steps[_currentStepIndex].repetitions) {
         _currentStepRepetition = 1;
         _currentStepIndex++;
     }
