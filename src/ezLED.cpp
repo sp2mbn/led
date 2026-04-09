@@ -41,6 +41,8 @@ ezLED::ezLED(int pin, int mode) {
 	_forceAnalog = false;
 	_analogMode = ANALOG_MODE_PWM;
 	_afterBlinkCallback = nullptr;
+	_onTurnOnCallback = nullptr;
+	_onTurnOnCallbackFired = false;
 
 	_fadeFrom           = 0;
 	_fadeTo             = 0;
@@ -229,6 +231,10 @@ void ezLED::setBrightness(int brightness) {
 	_brightness = brightness;
 }
 
+void ezLED::setOnTurnOnCallback(LedTurnOnCallback callback) {
+	_onTurnOnCallback = callback;
+}
+
 void ezLED::cancel(void) {
 	turnOFF();
 }
@@ -362,4 +368,11 @@ void ezLED::loop(void) {
 
 	if(_ledState != LED_STATE_FADE)
 		updateDigital();
+
+	if (_outputState == LED_ON && _onTurnOnCallback && !_onTurnOnCallbackFired) {
+		_onTurnOnCallbackFired = true;
+		_onTurnOnCallback();
+	} else if (_outputState == LED_OFF) {
+		_onTurnOnCallbackFired = false;
+	}
 }

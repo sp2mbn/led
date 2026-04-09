@@ -62,6 +62,8 @@
 #define ANALOG_MODE_PWM false
 #define ANALOG_MODE_DAC true
 
+typedef void (*LedTurnOnCallback)();
+
 class ezLED
 {
 	private:
@@ -74,6 +76,8 @@ class ezLED
 		bool _forceAnalog;
 		bool _analogMode;
 		std::function<void()> _afterBlinkCallback;
+		LedTurnOnCallback _onTurnOnCallback;
+		bool _onTurnOnCallbackFired;
 
 		unsigned char _fadeFrom = 0;
 		unsigned char _fadeTo = 0;
@@ -107,6 +111,7 @@ class ezLED
 		void blinkNumberOfTimes(unsigned long onTime, unsigned long offTime, unsigned int numberOfTimes, unsigned long delayTime = 0, std::function<void()> afterBlinkCallback = nullptr);
 
 		void setBrightness(int brightness);
+		void setOnTurnOnCallback(LedTurnOnCallback callback);
 
 		void cancel(void);
 
