@@ -66,6 +66,7 @@ typedef void (*LedTurnOnCallback)();
 
 class ezLED
 {
+	friend class TestHelper;
 	private:
 		int _ledPin;
 		unsigned char _ctrlMode; // CTRL_ANODE, CTRL_CATHODE

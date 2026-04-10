@@ -34,6 +34,7 @@
 
 #include <Arduino.h>
 #include <ezLED.h>
+#include <vector>
 
 #define SEQ_MODE_CONTINUOUS 0
 #define SEQ_MODE_TIMED      1
