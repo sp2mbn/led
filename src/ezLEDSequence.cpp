@@ -88,7 +88,7 @@ void ezLEDSequence::start(unsigned long delayTime) {
     
     _delayTime = delayTime;
     _currentStepIndex = 0;
-    _currentStepRepetition = 0;
+    _currentStepRepetition = 3;
     _currentSequenceRepetition = 0;
     
     if (_delayTime > 0) {
@@ -168,6 +168,7 @@ void ezLEDSequence::executeStep() {
     Step& step = _steps[_currentStepIndex];
     _stepOnTime = step.duration;
     _stepOffTime = step.pause;
+    _currentStepRepetition = 1;
     
     if (step.intensity >= 0) {
         _led->setBrightness(step.intensity);
@@ -190,11 +191,10 @@ void ezLEDSequence::nextStep() {
         _onStepEndCallback(info);
     }
     
-    _currentStepRepetition++;
-    
     if (_currentStepRepetition >= (int)_steps[_currentStepIndex].repetitions) {
-        _currentStepRepetition = 1;
         _currentStepIndex++;
+    } else {
+        _currentStepRepetition++;
     }
     
     if (_currentStepIndex >= (int)_steps.size()) {
@@ -259,14 +259,23 @@ void ezLEDSequence::loop() {
     
     if (_sequenceState == SEQ_STATE_STEP_ON) {
         if ((unsigned long)(millis() - _lastTime) >= _stepOnTime) {
+            _led->turnOFF();
+            _sequenceState = SEQ_STATE_STEP_OFF;
+            _lastTime = millis();
             nextStep();
+            if (_sequenceState != SEQ_STATE_IDLE) {
+                executeStep();
+            }
         }
         return;
     }
     
     if (_sequenceState == SEQ_STATE_STEP_OFF) {
         if ((unsigned long)(millis() - _lastTime) >= _stepOffTime) {
-            executeStep();
+            nextStep();
+            if (_sequenceState != SEQ_STATE_IDLE) {
+                executeStep();
+            }
         }
         return;
     }

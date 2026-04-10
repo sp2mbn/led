@@ -263,6 +263,10 @@ int ezLED::getPin(void) {
 	return _ledPin;
 }
 
+int ezLED::getBrightness(void) {
+	return _brightness;
+}
+
 void ezLED::loop(void) {
 
 	switch(_ledState) {

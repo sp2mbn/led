@@ -119,6 +119,7 @@ class ezLED
 		int getOnOff(void);
 		int getState(void);
 		int getPin(void);
+		int getBrightness(void);
 		void loop(void);
 };
 
