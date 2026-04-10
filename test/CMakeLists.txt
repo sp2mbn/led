@@ -16,6 +16,7 @@ FetchContent_MakeAvailable(unity)
 
 include_directories(
     ${CMAKE_SOURCE_DIR}/../src
+    ${CMAKE_SOURCE_DIR}
     ${unity_SOURCE_DIR}/src
 )
 
@@ -27,7 +28,7 @@ add_executable(test_ezLEDSequence
 
 target_link_libraries(test_ezLEDSequence unity)
 
-target_compile_definitions(test_ezLEDSequence PRIVATE ARDUINO=100)
+# target_compile_definitions(test_ezLEDSequence PRIVATE ARDUINO=100)
 
 target_include_directories(test_ezLEDSequence PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
